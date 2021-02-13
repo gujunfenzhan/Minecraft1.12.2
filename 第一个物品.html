@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>1.5 这是一个测试 · GitBook</title>
+        <title>2.3 第一个物品 · GitBook</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -58,7 +58,7 @@
 
     
     
-    <link rel="prev" href="下载及配置forge开发环境.html" />
+    <link rel="prev" href="服务代理与客户代理.html" />
     
 
     </head>
@@ -166,12 +166,38 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2.5" data-path="demo.html">
+        <li class="chapter " data-level="1.2.5" data-path="第一个模组.html">
             
-                <a href="demo.html">
+                <a href="第一个模组.html">
             
                     
-                    1.5 这是一个测试
+                    2.1 第一个模组
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.6" data-path="服务代理与客户代理.html">
+            
+                <a href="服务代理与客户代理.html">
+            
+                    
+                    2.2 服务代理与客户代理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.7" data-path="第一个物品.html">
+            
+                <a href="第一个物品.html">
+            
+                    
+                    2.3 第一个物品
             
                 </a>
             
@@ -214,7 +240,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="." >1.5 这是一个测试</a>
+        <a href="." >2.3 第一个物品</a>
     </h1>
 </div>
 
@@ -229,7 +255,55 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <p>&#x8FD9;&#x91CC;&#x4EC0;&#x4E48;&#x90FD;&#x6CA1;&#x6709;</p>
+                                <h1 id="&#x7B2C;&#x4E00;&#x4E2A;&#x7269;&#x54C1;">&#x7B2C;&#x4E00;&#x4E2A;&#x7269;&#x54C1;</h1>
+<p>&#x5728;com.mhxks.firstmod&#x5305;&#x4E0B;&#x65B0;&#x5EFA;init&#x5305;&#x548C;item&#x5305;&#xFF0C;&#x5728;item&#x5305;&#x4E0B;&#x65B0;&#x5EFA;ItemFunnyFruit&#x7EE7;&#x627F;&#x4E8E;Item&#x3002;<br>
+&#x5728;init&#x5305;&#x4E0B;&#x65B0;&#x5EFA;ModItemLoader&#xFF0C;&#x4EE5;&#x540E;&#x5199;&#x7684;&#x7269;&#x54C1;&#x5168;&#x5728;&#x8FD9;&#x4E2A;&#x7C7B;&#x91CC;&#x5B9E;&#x4F8B;&#x5316;</p>
+<pre><code>public class ModItemLoader {
+    //setRegistryName&#x8BBE;&#x7F6E;&#x7269;&#x54C1;&#x7684;&#x6CE8;&#x518C;&#x540D;&#xFF0C;setUnlocalizedName&#x6CE8;&#x518C;&#x7269;&#x54C1;&#x7684;&#x6C49;&#x5316;&#x540D;
+    public static Item FUNNY_FRUIT = new ItemFunnyFruit().setRegistryName(&quot;funny_fruit&quot;).setUnlocalizedName(&quot;funnyFruit&quot;);
+}
+</code></pre><p>&#x56DE;&#x5230;CommonProxy&#x6CE8;&#x518C;&#x7269;&#x54C1;</p>
+<pre><code>public class CommonProxy {
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register&lt;Item&gt; reg) {
+        reg.getRegistry().register(ModItemLoader.FUNNY_FRUIT);
+        //&#x6CE8;&#x518C;&#x7269;&#x54C1;
+    }
+
+
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register&lt;Block&gt; reg) {
+        //&#x6CE8;&#x518C;&#x65B9;&#x5757;
+    }
+    //&#x6CE8;&#x518C;&#x65B9;&#x5757;&#x5728;&#x7269;&#x54C1;&#x4E0B;&#x7684;&#x72B6;&#x6001;
+    public void registerItemBlock(RegistryEvent.Register&lt;Item&gt; reg, Block block) {
+        reg.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+    }
+}
+</code></pre><p>&#x5728;ClientProxy&#x6CE8;&#x518C;&#x6A21;&#x578B;</p>
+<pre><code>public class ClientProxy
+extends CommonProxy {
+    //&#x6CE8;&#x610F;&#x9700;&#x8981;&#x7EE7;&#x627F;CommonProxy&#xFF0C;&#x5F88;&#x591A;&#x65B0;&#x624B;&#x90FD;&#x4F1A;&#x5FD8;&#x5199;&#x8FD9;&#x4E2A;
+    //&#x6CE8;&#x518C;&#x7269;&#x54C1;&#x548C;&#x65B9;&#x5757;&#x7684;&#x6A21;&#x578B;
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event) {
+        registerItemModel(ModItemLoader.FUNNY_FRUIT);
+    }
+    public void registerItemModel(Item item) {
+        ModelLoader.setCustomModelResourceLocation(item,0,new ModelResourceLocation(item.getRegistryName(),&quot;inventory&quot;));
+    }
+    public void registerBlockModel(Block block) {
+        registerItemModel(Item.getItemFromBlock(block));
+    }
+}
+</code></pre><p>&#x6B64;&#x65F6;&#x4F60;&#x5DF2;&#x7ECF;&#x5199;&#x597D;&#x4E86;&#x4E00;&#x4E2A;&#x7269;&#x54C1;&#xFF0C;&#x8FDB;&#x5165;&#x6E38;&#x620F;&#x540E;&#x8F93;&#x5165;/give @a firstmod:funny_fruit&#x4F1A;&#x83B7;&#x5F97;&#x4E00;&#x4E2A;&#x7D2B;&#x9ED1;&#x8272;&#x7684;&#x7269;&#x54C1;&#xFF0C;&#x90A3;&#x662F;&#x56E0;&#x4E3A;&#x8FD8;&#x6CA1;&#x6709;&#x7ED9;&#x4ED6;&#x8D34;&#x56FE;&#x3002;&#x5728;resources&#x76EE;&#x5F55;&#x4E0B;&#x65B0;&#x5EFA;assets/firstmod&#xFF0C;&#x5728;&#x8FD9;&#x4E2A;&#x76EE;&#x5F55;&#x4E0B;&#x5206;&#x522B;&#x65B0;&#x5EFA;textures/item&#x548C;models/item&#x76EE;&#x5F55;,&#x5728;textures/item&#x76EE;&#x5F55;&#x4E0B;&#x653E;&#x5165;&#x8D34;&#x56FE;funny_fruit.png<img src="image/funny_fruit.png" alt="IMAGER">&#xFF0C;&#x5728;models/item&#x76EE;&#x5F55;&#x4E0B;&#x65B0;&#x5EFA;funny_fruit.json</p>
+<pre><code>{
+  &quot;parent&quot;: &quot;item/generated&quot;,
+  &quot;textures&quot;: {
+    &quot;layer0&quot;: &quot;firstmod:item/funny_fruit&quot;
+  }
+}
+</code></pre><p>&#x7136;&#x540E;&#x542F;&#x52A8;&#x6E38;&#x620F;&#x5C31;&#x6709;&#x8D34;&#x56FE;&#x4E86;&#xFF01;</p>
 
                                 
                                 </section>
@@ -257,7 +331,7 @@
 
             
                 
-                <a href="下载及配置forge开发环境.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 1.4 下载及配置forge开发环境">
+                <a href="服务代理与客户代理.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 2.2 服务代理与客户代理">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -269,7 +343,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"1.5 这是一个测试","level":"1.2.5","depth":2,"previous":{"title":"1.4 下载及配置forge开发环境","level":"1.2.4","depth":2,"path":"下载及配置forge开发环境.md","ref":"下载及配置forge开发环境.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"demo.md","mtime":"2021-02-13T13:51:06.380Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-13T13:56:14.390Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"2.3 第一个物品","level":"1.2.7","depth":2,"previous":{"title":"2.2 服务代理与客户代理","level":"1.2.6","depth":2,"path":"服务代理与客户代理.md","ref":"服务代理与客户代理.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["livereload"],"pluginsConfig":{"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"第一个物品.md","mtime":"2021-02-13T15:39:09.128Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-02-13T15:41:15.695Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
